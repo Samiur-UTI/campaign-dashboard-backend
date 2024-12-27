@@ -25,7 +25,7 @@ export class UsersService {
     const { email, password, firstName, lastName, phone } = registerUserDto;
 
     // Check if the user already exists
-    const existingUser = this.findUserByEmail(email);
+    const existingUser = await this.findUserByEmail(email);
     if (existingUser) {
       throw new ConflictException('Email already exists.');
     }
