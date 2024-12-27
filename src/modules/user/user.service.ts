@@ -21,9 +21,7 @@ export class UsersService {
     const { email, password, firstName, lastName, phone } = registerUserDto;
 
     // Check if the user already exists
-    const existingUser = await this.userRepository.findOne({
-      where: { email },
-    });
+    const existingUser = this.findByEmail(email);
     if (existingUser) {
       throw new ConflictException('Email already exists.');
     }
@@ -51,5 +49,11 @@ export class UsersService {
       },
     );
     return { message: 'User registered successfully' };
+  }
+
+  async findByEmail(email: string): Promise<User> {
+    return await this.userRepository.findOne({
+      where: { email },
+    });
   }
 }
