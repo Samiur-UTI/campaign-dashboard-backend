@@ -1,12 +1,14 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Lead } from './leads.entity';
 
 @Entity('connections')
 export class Connection {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  leadId: number;
+  @ManyToOne(() => Lead, (lead) => lead.id)
+  lead: Lead;
+
   @Column()
   name: string;
 

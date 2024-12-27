@@ -4,8 +4,9 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
 } from 'typeorm';
-
+import { Project } from './project.entity';
 export enum CampaignStatus {
   ACTIVE = 'active',
   INACTIVE = 'inactive',
@@ -16,8 +17,8 @@ export class Campaign {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  projectId: number;
+  @ManyToOne(() => Project, (project) => project.id, { eager: true })
+  project: Project;
 
   @Column()
   name: string;
