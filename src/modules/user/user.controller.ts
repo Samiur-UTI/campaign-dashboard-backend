@@ -1,6 +1,15 @@
-import { Controller, Post, Body, ConflictException } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  ConflictException,
+  UseGuards,
+  Get,
+  Request,
+} from '@nestjs/common';
 import { RegisterUserDto } from '../common/dto/userRegisterDto';
 import { UsersService } from './user.service';
+import { JwtAuthGuard } from '../common/guard/jwt-auth.guard';
 
 @Controller('user')
 export class UsersController {
@@ -18,5 +27,13 @@ export class UsersController {
       }
       throw error;
     }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get()
+  async getUser(@Request() req) {
+    const email = req.user.email;
+    const userProfile = await this.usersService.getUserProfileByEmail(email);
+    return userProfile;
   }
 }

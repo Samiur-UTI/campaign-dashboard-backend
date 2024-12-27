@@ -1,4 +1,8 @@
-import { Injectable, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, EntityManager } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -21,7 +25,7 @@ export class UsersService {
     const { email, password, firstName, lastName, phone } = registerUserDto;
 
     // Check if the user already exists
-    const existingUser = this.findByEmail(email);
+    const existingUser = this.findUserByEmail(email);
     if (existingUser) {
       throw new ConflictException('Email already exists.');
     }
@@ -51,9 +55,26 @@ export class UsersService {
     return { message: 'User registered successfully' };
   }
 
-  async findByEmail(email: string): Promise<User> {
+  async findUserByEmail(email: string): Promise<User> {
     return await this.userRepository.findOne({
       where: { email },
     });
+  }
+
+  async getUserProfileByEmail(
+    email: string,
+  ): Promise<{ email: string; profile: Profile }> {
+    const userWithProfile = await this.userRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.profile', 'profile')
+      .where('user.email = :email', { email })
+      .select(['user.email', 'profile']) // Select only the user email and all profile fields
+      .getOne();
+
+    if (!userWithProfile) {
+      throw new NotFoundException('User not found');
+    }
+
+    return { email: userWithProfile.email, profile: userWithProfile.profile }; // Return only the email and profile information
   }
 }
