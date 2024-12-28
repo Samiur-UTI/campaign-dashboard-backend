@@ -5,8 +5,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  OneToMany,
 } from 'typeorm';
 import { Project } from './project.entity';
+import { Lead } from './leads.entity';
 export enum CampaignStatus {
   ACTIVE = 'active',
   INACTIVE = 'inactive',
@@ -26,6 +28,7 @@ export class Campaign {
   @Column({
     type: 'enum',
     enum: CampaignStatus,
+    default: CampaignStatus.INACTIVE,
   })
   status: CampaignStatus;
 
@@ -34,4 +37,7 @@ export class Campaign {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => Lead, (lead) => lead.campaign)
+  leads: Lead[];
 }

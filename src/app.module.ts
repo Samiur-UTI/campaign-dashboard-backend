@@ -4,6 +4,7 @@ import { databaseConfig } from './config/database.config';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { ProjectsModule } from './modules/project/project.module';
+import { CampaignsModule } from './modules/campaign/campaign.module';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { ProjectsModule } from './modules/project/project.module';
     UserModule,
     AuthModule,
     ProjectsModule,
+    CampaignsModule
   ],
   controllers: [],
   providers: [],
