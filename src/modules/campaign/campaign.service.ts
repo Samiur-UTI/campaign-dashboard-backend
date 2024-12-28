@@ -84,7 +84,7 @@ export class CampaignsService {
     const [result, totalCount] = await this.campaignRepository.findAndCount({
       where: {
         project: { id: projectId },
-        name: Like(`%${searchTerm}%`), // Search by name using wildcard
+        name: Like(`%${searchTerm}%`),
       },
       relations: ['project', 'leads', 'leads.connection'],
       skip,

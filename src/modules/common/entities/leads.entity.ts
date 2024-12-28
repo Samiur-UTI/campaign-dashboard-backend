@@ -4,8 +4,10 @@ import {
   Column,
   CreateDateColumn,
   ManyToOne,
+  OneToMany,
 } from 'typeorm';
 import { Campaign } from './campaign.entity';
+import { Connection } from './connection.entity';
 
 @Entity('leads')
 export class Lead {
@@ -26,4 +28,7 @@ export class Lead {
 
   @CreateDateColumn()
   createdAt: Date;
+
+  @OneToMany(() => Connection, (connection) => connection.lead)
+  connection: Connection[];
 }
