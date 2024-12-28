@@ -26,6 +26,7 @@ export class Campaign {
   @Column({
     type: 'enum',
     enum: CampaignStatus,
+    default: CampaignStatus.INACTIVE,
   })
   status: CampaignStatus;
 
