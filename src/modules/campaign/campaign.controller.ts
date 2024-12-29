@@ -22,16 +22,28 @@ export class CampaignsController {
   @Get('/search/:projectId')
   async searchCampaigns(
     @Param('projectId') projectId: number,
-    @Query('term') term: string,
+    @Query('term') term?: string,
+    @Query('ids') ids?: string, // Accepting ids as a comma-separated string
+    @Query('createdBefore') createdBefore?: string,
+    @Query('createdAfter') createdAfter?: string,
+    @Query('leadsCount') leadsCount?: number,
+    @Query('sortOrder') sortOrder: 'ASC' | 'DESC' = 'ASC',
     @Query('page') page = 1,
     @Query('limit') limit = 10,
   ) {
-    return this.campaignsService.searchCampaignsByName(
-      projectId,
+    // Parse ids from comma-separated string to an array of numbers
+    const idsArray = ids ? ids.split(',').map((id) => Number(id)) : undefined;
+
+    return this.campaignsService.searchCampaigns(projectId, {
       term,
+      ids: idsArray,
+      createdBefore,
+      createdAfter,
+      leadsCount,
+      sortOrder,
       page,
       limit,
-    );
+    });
   }
 
   @Get('/names/:projectId')
@@ -41,15 +53,11 @@ export class CampaignsController {
 
   @Get('/details/:projectId')
   async getCampaignDetails(
-    @Query('names') names: string[],
+    @Query('ids') ids: number[],
     @Query('page') page = 1,
     @Query('limit') limit = 10,
   ) {
-    return this.campaignsService.fetchCampaignDetailsByNames(
-      names,
-      page,
-      limit,
-    );
+    return this.campaignsService.fetchCampaignDetailsByIds(ids, page, limit);
   }
 
   @Post('/create')
