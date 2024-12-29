@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In, Like } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { Campaign } from '../common/entities/campaign.entity';
 import { Project } from '../common/entities/project.entity';
 import { Lead } from '../common/entities/leads.entity';
@@ -73,51 +73,95 @@ export class CampaignsService {
     await this.campaignRepository.remove(campaign);
   }
 
-  async searchCampaignsByName(
+  async searchCampaigns(
     projectId: number,
-    searchTerm: string,
-    page: number,
-    limit: number,
+    {
+      term,
+      ids,
+      createdBefore, // Adjust these two based on actual column names in your entity
+      createdAfter, // Adjust these two based on actual column names in your entity
+      leadsCount,
+      sortOrder = 'ASC',
+      page = 1,
+      limit = 10,
+    }: {
+      term?: string;
+      ids?: number[];
+      createdBefore?: string; // Ensure these types reflect your actual usage
+      createdAfter?: string;
+      leadsCount?: number;
+      sortOrder?: 'ASC' | 'DESC';
+      page?: number;
+      limit?: number;
+    } = {},
   ) {
     const skip = (page - 1) * limit;
 
-    const [result, totalCount] = await this.campaignRepository.findAndCount({
-      where: {
-        project: { id: projectId },
-        name: Like(`%${searchTerm}%`),
-      },
-      relations: ['project', 'leads', 'leads.connection'],
-      skip,
-      take: limit,
-    });
+    const query = this.campaignRepository
+      .createQueryBuilder('campaign')
+      .where('campaign.projectId = :projectId', { projectId });
+
+    // Add filters
+    if (term) {
+      query.andWhere('campaign.name LIKE :term', { term: `%${term}%` });
+    }
+
+    if (ids && ids.length) {
+      query.andWhere('campaign.id IN (:...ids)', { ids });
+    }
+
+    // Replace 'campaign.createdAt' with your actual creation date field name
+    if (createdBefore) {
+      query.andWhere('campaign.createdAt < :createdBefore', { createdBefore });
+    }
+
+    if (createdAfter) {
+      query.andWhere('campaign.createdAt > :createdAfter', { createdAfter });
+    }
+
+    // If leadsCount is specified, perform a subquery to count leads
+    if (leadsCount !== undefined) {
+      query.andWhere(
+        `(SELECT COUNT(lead.id) FROM leads lead WHERE lead.campaignId = campaign.id) = :leadsCount`,
+        { leadsCount },
+      );
+    }
+
+    // Sort the results
+    query.orderBy('campaign.createdAt', sortOrder).skip(skip).take(limit);
+
+    const [results, totalCount] = await query.getManyAndCount();
 
     return {
-      data: result,
+      data: results,
       totalRecords: totalCount,
       page,
       limit,
     };
   }
 
-  async findAllCampaignNamesByProjectId(projectId: number): Promise<string[]> {
+  async findAllCampaignNamesByProjectId(
+    projectId: number,
+  ): Promise<{ name: string; id: number }[]> {
     const campaigns = await this.campaignRepository.find({
       where: { project: { id: projectId } },
-      select: ['name'], // Only select names
+      select: ['name', 'id'],
     });
 
-    return campaigns.map((campaign) => campaign.name);
+    return campaigns.map((campaign) => {
+      return {
+        name: campaign.name,
+        id: campaign.id,
+      };
+    });
   }
 
-  async fetchCampaignDetailsByNames(
-    names: string[],
-    page: number,
-    limit: number,
-  ) {
+  async fetchCampaignDetailsByIds(ids: number[], page: number, limit: number) {
     const skip = (page - 1) * limit;
 
     const [result, totalCount] = await this.campaignRepository.findAndCount({
-      where: { name: In(names) },
-      relations: ['project', 'leads', 'leads.connection'], // Load related data
+      where: { id: In(ids) },
+      relations: ['project', 'leads', 'leads.connection'],
       skip,
       take: limit,
     });
