@@ -1,99 +1,138 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+```markdown
+# Campaign Dashboard Backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Welcome to the **Campaign Dashboard Backend** repository! This project is a [NestJS](https://nestjs.com/) application that serves as the backend for managing campaigns, projects, and user accounts.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Features
 
-## Description
+- **NestJS Framework**: Efficient, scalable server-side application framework.
+- **PostgreSQL Integration**: Uses PostgreSQL as the database.
+- **TypeORM**: Powerful ORM for managing database operations.
+- **Authentication**: Includes JWT-based authentication.
+- **Seeding**: Seed campaigns for testing pagination and search functionalities.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Getting Started
 
-## Project setup
+Follow these steps to set up and run the project locally.
 
+### Prerequisites
+
+Ensure you have the following installed:
+
+- **Node.js** (version 16 or higher)
+- **npm** or **yarn** for package management
+- **Docker** (optional but recommended for setting up PostgreSQL and pgAdmin)
+
+### Installation
+
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/Samiur-UTI/campaign-dashboard-backend.git
+   cd campaign-dashboard-backend
+   ```
+
+2. **Install Dependencies**:
+   Using npm:
+   ```bash
+   npm install
+   ```
+   Or using yarn:
+   ```bash
+   yarn install
+   ```
+
+3. **Set Up Environment Variables**:
+   - Rename the `env.example` file to `.env`:
+     ```bash
+     mv env.example .env
+     ```
+   - Open the `.env` file and configure the following environment variables:
+     ```env
+     POSTGRES_USER=your_username
+     POSTGRES_PASSWORD=your_password
+     POSTGRES_DB=your_database
+     PGADMIN_DEFAULT_EMAIL=admin@example.com
+     PGADMIN_DEFAULT_PASSWORD=admin_password
+     API_PREFIX=/api/v1
+     PORT=5000
+     JWT_SECRET=example
+     ```
+
+4. **Set Up PostgreSQL and pgAdmin**:
+   - Using Docker Compose:
+     ```bash
+     docker-compose up -d
+     ```
+   - Alternatively, start PostgreSQL and pgAdmin manually using your preferred setup.
+
+5. **Run Database Migrations**:
+   ```bash
+   npm run migration:run
+   ```
+
+6. **Start the Application**:
+   - Development mode:
+     ```bash
+     npm run start:dev
+     ```
+   - Production mode:
+     ```bash
+     npm run start:prod
+     ```
+
+   The API will be available at `http://localhost:5000/api/v1`.
+
+### Seeding Data
+
+To seed the database with test campaigns, use the following command:
 ```bash
-$ npm install
+npm run seed:campaigns
 ```
 
-## Compile and run the project
+## Scripts
 
-```bash
-# development
-$ npm run start
+Here are the available npm scripts:
 
-# watch mode
-$ npm run start:dev
+- **`npm run start`**: Start the application in production mode.
+- **`npm run start:dev`**: Start the application in development mode with hot reloading.
+- **`npm run build`**: Build the application for production.
+- **`npm run lint`**: Lint the codebase.
+- **`npm run migration:generate`**: Generate a new database migration.
+- **`npm run migration:run`**: Run pending database migrations.
+- **`npm run migration:revert`**: Revert the last applied migration.
+- **`npm run seed:campaigns`**: Seed the database with sample campaigns.
 
-# production mode
-$ npm run start:prod
+## Folder Structure
+
+```
+/campaign-dashboard-backend
+├── dist                 # Compiled application files
+├── src                  # Source files
+│   ├── config           # Configuration files
+│   ├── migrations       # TypeORM migrations
+│   ├── modules          # Application modules (auth, campaign, user, etc.)
+│   ├── seed             # Data seeding scripts
+│   └── main.ts          # Application entry point
+├── docker-compose.yml   # Docker Compose file for PostgreSQL and pgAdmin
+├── env.example          # Example environment configuration
+├── package.json         # Project metadata and dependencies
+├── tsconfig.json        # TypeScript configuration
+├── tsconfig.build.json  # TypeScript build configuration
 ```
 
-## Run tests
+## Contributing
 
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+We welcome contributions! Please fork the repository and create a pull request with your changes.
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## Feedback
+
+If you have any feedback, suggestions, or issues, please open an [issue](https://github.com/Samiur-UTI/campaign-dashboard-backend/issues) or contact us directly.
+
+---
+
+Happy coding! 🎉
+```
