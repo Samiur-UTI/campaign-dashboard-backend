@@ -78,8 +78,8 @@ export class CampaignsService {
     {
       term,
       ids,
-      createdBefore, // Adjust these two based on actual column names in your entity
-      createdAfter, // Adjust these two based on actual column names in your entity
+      createdBefore,
+      createdAfter,
       leadsCount,
       sortOrder = 'ASC',
       page = 1,
@@ -87,7 +87,7 @@ export class CampaignsService {
     }: {
       term?: string;
       ids?: number[];
-      createdBefore?: string; // Ensure these types reflect your actual usage
+      createdBefore?: string;
       createdAfter?: string;
       leadsCount?: number;
       sortOrder?: 'ASC' | 'DESC';
@@ -132,11 +132,16 @@ export class CampaignsService {
 
     const [results, totalCount] = await query.getManyAndCount();
 
+    // Calculate start and end indices for the response
+    const startIndex = skip + 1;
+    const endIndex = Math.min(skip + results.length, totalCount);
+
     return {
       data: results,
       totalRecords: totalCount,
       page,
       limit,
+      sequence: `${startIndex}-${endIndex} of ${totalCount}`,
     };
   }
 
