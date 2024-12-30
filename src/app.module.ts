@@ -12,7 +12,7 @@ import { CampaignsModule } from './modules/campaign/campaign.module';
     UserModule,
     AuthModule,
     ProjectsModule,
-    CampaignsModule
+    CampaignsModule,
   ],
   controllers: [],
   providers: [],
